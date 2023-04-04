@@ -16,5 +16,6 @@ sqoop import-all-tables \
     --as-avrodatafile \
     --compression-codec=snappy \
     --m 1
-    
+
+hdfs dfs -mkdir -p /project/avsc    
 hdfs dfs -put *.avsc /project/avsc
