@@ -47,17 +47,18 @@ CREATE TABLE cart_holder(
     cart_holder_id integer NOT NULL PRIMARY KEY
 );
 
-ALTER TABLE transactions ADD CONSTRAINT fk_trans_merch FOREIGN KEY(merchant_id) REFERENCES merchant (merchant_id);
-
-ALTER TABLE transactions ADD CONSTRAINT fk_trans_cart_hold FOREIGN KEY(cart_holder_id) REFERENCES cart_holder (cart_holder_id);
-
--- SET datestyle TO iso, ymd;
 
 \COPY transactions FROM 'data/transactions.csv' DELIMITER ',' CSV HEADER NULL AS 'null';
 
 \COPY merchant FROM 'data/merchant.csv' DELIMITER ',' CSV HEADER NULL AS 'null';
 
 \COPY cart_holder FROM 'data/cart_holder.csv' DELIMITER ',' CSV HEADER NULL AS 'null';
+
+-- SET datestyle TO iso, ymd;
+
+ALTER TABLE transactions ADD CONSTRAINT fk_trans_merch FOREIGN KEY(merchant_id) REFERENCES merchant (merchant_id);
+
+ALTER TABLE transactions ADD CONSTRAINT fk_trans_cart_hold FOREIGN KEY(cart_holder_id) REFERENCES cart_holder (cart_holder_id);
 
 COMMIT;
 
