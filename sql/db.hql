@@ -14,5 +14,5 @@ CREATE EXTERNAL TABLE cart_holder STORED AS AVRO LOCATION '/project/cart_holder'
 
 -- For checking the content of tables
 SELECT * FROM transactions limit 5;
-SELECT * FROM merchants limit 5;
-SELECT * FROM cart_holders limit 5;
+SELECT * FROM merchant limit 5;
+SELECT * FROM cart_holder limit 5;
