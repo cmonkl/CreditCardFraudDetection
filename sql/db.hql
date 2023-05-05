@@ -22,7 +22,7 @@ index int,
 trans_date_trans_time timestamp,
 amt decimal(10,2),
 trans_num VARCHAR(32),
-unix_time integer,
+unix_time int,
 merchant_id int,
 cart_holder_id int
 )
