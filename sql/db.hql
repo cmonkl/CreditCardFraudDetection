@@ -20,8 +20,8 @@ SET hive.enforce.bucketing=true;
 -- Partitioning on category and bucketing on merchant_id
 CREATE EXTERNAL TABLE merchants_part_buck(
     merchant varchar(50),
-    merch_lat double precision,
-    merch_long double precision,
+    merch_lat double,
+    merch_long double,
     merchant_id int) 
     PARTITIONED BY (category varchar(50)) 
     CLUSTERED BY (merchant_id) into 5 buckets
