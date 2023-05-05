@@ -27,7 +27,7 @@ CREATE EXTERNAL TABLE merchants_part(
     STORED AS AVRO LOCATION '/project/merchant_part' 
     TBLPROPERTIES ('AVRO.COMPRESS'='SNAPPY');
     
-INSERT INTO merchants_part_buck partition (category) SELECT * FROM merchant;
+INSERT INTO merchants_part partition (category) SELECT * FROM merchant;
 
 
 -- Partitioning on is_fraud
