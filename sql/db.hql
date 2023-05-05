@@ -17,15 +17,14 @@ SET hive.exec.dynamic.partition = true;
 SET hive.exec.dynamic.partition.mode = nonstrict;
 SET hive.enforce.bucketing=true;
 
--- Partitioning on category and bucketing on merchant_id
-CREATE EXTERNAL TABLE merchants_part_buck(
+-- Partitioning on category
+CREATE EXTERNAL TABLE merchants_part(
     merchant varchar(50),
     merch_lat double,
     merch_long double,
     merchant_id int) 
     PARTITIONED BY (category varchar(50)) 
-    CLUSTERED BY (merchant_id) into 5 buckets
-    STORED AS AVRO LOCATION '/project/merchant_part_buck' 
+    STORED AS AVRO LOCATION '/project/merchant_part' 
     TBLPROPERTIES ('AVRO.COMPRESS'='SNAPPY');
     
 INSERT INTO merchants_part_buck partition (category) SELECT * FROM merchant;
