@@ -15,20 +15,6 @@ CREATE EXTERNAL TABLE cart_holder STORED AS AVRO LOCATION '/project/cart_holder'
 -- Creating bucketing anf partitioning
 SET hive.exec.dynamic.partition = true;
 SET hive.exec.dynamic.partition.mode = nonstrict;
-SET hive.enforce.bucketing=true;
-
--- Partitioning on category
-CREATE EXTERNAL TABLE merchants_part(
-    merchant varchar(50),
-    merch_lat double,
-    merch_long double,
-    merchant_id int) 
-    PARTITIONED BY (category varchar(50)) 
-    STORED AS AVRO LOCATION '/project/merchant_part' 
-    TBLPROPERTIES ('AVRO.COMPRESS'='SNAPPY');
-    
-INSERT INTO merchants_part partition (category) SELECT * FROM merchant;
-
 
 -- Partitioning on is_fraud
 CREATE EXTERNAL TABLE transactions_part(
@@ -36,7 +22,7 @@ index int,
 trans_date_trans_time timestamp,
 amt decimal(10,2),
 trans_num VARCHAR(32),
-unix_time integer,,
+unix_time integer,
 merchant_id int,
 cart_holder_id int
 )
