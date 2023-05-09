@@ -32,3 +32,5 @@ TBLPROPERTIES ('AVRO.COMPRESS'='SNAPPY');
 
 INSERT INTO transactions_part partition (is_fraud=0) SELECT index, trans_date_trans_time, amt, trans_num, merchant_id, cart_holder_id FROM transactions WHERE is_fraud=0;
 INSERT INTO transactions_part partition (is_fraud=1) SELECT index, trans_date_trans_time, amt, trans_num, merchant_id, cart_holder_id FROM transactions WHERE is_fraud=1;
+
+
