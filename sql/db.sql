@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS transactions;
 CREATE TABLE
     transactions (
         index integer NOT NULL PRIMARY KEY,
-        trans_date_trans_time decimal(10, 2),
+        trans_date_trans_time integer,
         amt decimal(10, 2),
         trans_num VARCHAR(32),
         is_fraud integer NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE
         long double precision,
         city_pop integer,
         job VARCHAR(100),
-        dob decimal(10, 2),
+        dob integer,
         cart_holder_id integer NOT NULL PRIMARY KEY
     );
 
