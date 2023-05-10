@@ -6,14 +6,14 @@ INSERT OVERWRITE LOCAL DIRECTORY '/root/query_results/q1'
 ROW FORMAT DELIMITED 
 FIELDS TERMINATED BY ','
 SELECT m.category, COUNT(m.category)
-FROM merchant as m inner join transactions as t on m.merchant_id=t.merchant_id
+FROM merchant_buck as m inner join transactions_part as t on m.merchant_id=t.merchant_id
 WHERE t.is_fraud = 1
 GROUP BY m.category;
 
 
 -- Percentage distance between fraud and not fraud for category
-WITH cat_fraud as (SELECT m.category, COUNT(m.category) as count FROM merchant as m inner join transactions as t on m.merchant_id=t.merchant_id WHERE t.is_fraud = 1 GROUP BY m.category),
-cat_not_fraud as (SELECT m.category, COUNT(m.category) as count  FROM merchant as m inner join transactions as t on m.merchant_id=t.merchant_id WHERE t.is_fraud = 0 GROUP BY m.category),
+WITH cat_fraud as (SELECT m.category, COUNT(m.category) as count FROM merchant_buck as m inner join transactions_part as t on m.merchant_id=t.merchant_id WHERE t.is_fraud = 1 GROUP BY m.category),
+cat_not_fraud as (SELECT m.category, COUNT(m.category) as count  FROM merchant_buck as m inner join transactions_part as t on m.merchant_id=t.merchant_id WHERE t.is_fraud = 0 GROUP BY m.category),
 sum_fraud as (SELECT SUM(cf.count) as sum FROM cat_fraud as cf),
 sum_not_fraud as (SELECT SUM(cnf.count) as sum FROM cat_not_fraud as cnf)
 INSERT OVERWRITE LOCAL DIRECTORY '/root/query_results/q2'
@@ -23,8 +23,8 @@ SELECT cat_fraud.category, (cat_fraud.count/sf.sum - cat_not_fraud.count/snf.sum
 
 
 -- Percentage distance between fraud and not fraud for state
-WITH state_fraud as (SELECT ch.state, COUNT(ch.state) as count FROM cart_holder as ch inner join transactions as t on ch.cart_holder_id=t.cart_holder_id WHERE t.is_fraud = 1 GROUP BY ch.state),
-state_not_fraud as (SELECT ch.state, COUNT(ch.state) as count  FROM cart_holder as ch inner join transactions as t on ch.cart_holder_id=t.cart_holder_id WHERE t.is_fraud = 0 GROUP BY ch.state),
+WITH state_fraud as (SELECT ch.state, COUNT(ch.state) as count FROM cart_holder_buck as ch inner join transactions_part as t on ch.cart_holder_id=t.cart_holder_id WHERE t.is_fraud = 1 GROUP BY ch.state),
+state_not_fraud as (SELECT ch.state, COUNT(ch.state) as count  FROM cart_holder_buck as ch inner join transactions_part as t on ch.cart_holder_id=t.cart_holder_id WHERE t.is_fraud = 0 GROUP BY ch.state),
 sum_fraud as (SELECT SUM(sf.count) as sum FROM state_fraud as sf),
 sum_not_fraud as (SELECT SUM(snf.count) as sum FROM state_not_fraud as snf)
 INSERT OVERWRITE LOCAL DIRECTORY '/root/query_results/q3'
@@ -34,8 +34,8 @@ SELECT state_fraud.state, (state_fraud.count/sf.sum - state_not_fraud.count/snf.
 
 
 -- Gender vs Fraud
-WITH gender_fraud as (SELECT ch.gender, COUNT(ch.gender) as count FROM cart_holder as ch inner join transactions as t on ch.cart_holder_id=t.cart_holder_id WHERE t.is_fraud = 1 GROUP BY ch.gender),
-gender_not_fraud as (SELECT ch.gender, COUNT(ch.gender) as count  FROM cart_holder as ch inner join transactions as t on ch.cart_holder_id=t.cart_holder_id WHERE t.is_fraud = 0 GROUP BY ch.gender),
+WITH gender_fraud as (SELECT ch.gender, COUNT(ch.gender) as count FROM cart_holder_buck as ch inner join transactions_part as t on ch.cart_holder_id=t.cart_holder_id WHERE t.is_fraud = 1 GROUP BY ch.gender),
+gender_not_fraud as (SELECT ch.gender, COUNT(ch.gender) as count  FROM cart_holder_buck as ch inner join transactions_part as t on ch.cart_holder_id=t.cart_holder_id WHERE t.is_fraud = 0 GROUP BY ch.gender),
 sum_fraud as (SELECT SUM(gf.count) as sum FROM gender_fraud as gf),
 sum_not_fraud as (SELECT SUM(gnf.count) as sum FROM gender_not_fraud as gnf)
 INSERT OVERWRITE LOCAL DIRECTORY '/root/query_results/q4' 
@@ -49,12 +49,12 @@ INSERT OVERWRITE LOCAL DIRECTORY '/root/query_results/q5'
 ROW FORMAT DELIMITED 
 FIELDS TERMINATED BY ','
 SELECT is_fraud, AVG(amt)
-FROM transactions
+FROM transactions_part
 GROUP BY is_fraud;
 
 
 -- Hourly trend
-WITH transactions_time as (SELECT FROM_UNIXTIME(t.trans_date_trans_time) as time, t.is_fraud FROM transactions as t),
+WITH transactions_time as (SELECT FROM_UNIXTIME(t.trans_date_trans_time) as time, t.is_fraud FROM transactions_part as t),
 transactions_hours as (SELECT HOUR(t.time) as hour, t.is_fraud FROM transactions_time as t),
 hour_fraud as (SELECT hour, COUNT(hour) as count FROM transactions_hours WHERE is_fraud=1 GROUP BY hour),
 hour_not_fraud as (SELECT hour, COUNT(hour) as count FROM transactions_hours WHERE is_fraud=0 GROUP BY hour),
@@ -68,7 +68,7 @@ FROM hour_fraud as hf inner join hour_not_fraud as hnf on hf.hour=hnf.hour, sum_
 
 
 -- Monthly trend
-WITH transactions_time as (SELECT FROM_UNIXTIME(t.trans_date_trans_time) as time, t.is_fraud FROM transactions as t),
+WITH transactions_time as (SELECT FROM_UNIXTIME(t.trans_date_trans_time) as time, t.is_fraud FROM transactions_part as t),
 transactions_month as (SELECT MONTH(t.time) as month, t.is_fraud FROM transactions_time as t),
 month_fraud as (SELECT month, COUNT(month) as count FROM transactions_month WHERE is_fraud=1 GROUP BY month),
 month_not_fraud as (SELECT month, COUNT(month) as count FROM transactions_month WHERE is_fraud=0 GROUP BY month),
@@ -82,9 +82,9 @@ FROM month_fraud as hf inner join month_not_fraud as hnf on hf.month=hnf.month, 
 
 
 -- Age vs Fraud
-WITH cart_holder_age as (SELECT (2023-YEAR(FROM_UNIXTIME(dob))) as age, cart_holder_id FROM cart_holder),
-age_fraud as (SELECT ch.age, COUNT(ch.age) as count FROM cart_holder_age as ch inner join transactions as t on ch.cart_holder_id=t.cart_holder_id WHERE t.is_fraud = 1 GROUP BY ch.age),
-age_not_fraud as (SELECT ch.age, COUNT(ch.age) as count FROM cart_holder_age as ch inner join transactions as t on ch.cart_holder_id=t.cart_holder_id WHERE t.is_fraud = 0 GROUP BY ch.age),
+WITH cart_holder_age as (SELECT (2023-YEAR(FROM_UNIXTIME(dob))) as age, cart_holder_id FROM cart_holder_buck),
+age_fraud as (SELECT ch.age, COUNT(ch.age) as count FROM cart_holder_age as ch inner join transactions_part as t on ch.cart_holder_id=t.cart_holder_id WHERE t.is_fraud = 1 GROUP BY ch.age),
+age_not_fraud as (SELECT ch.age, COUNT(ch.age) as count FROM cart_holder_age as ch inner join transactions_part as t on ch.cart_holder_id=t.cart_holder_id WHERE t.is_fraud = 0 GROUP BY ch.age),
 sum_fraud as (SELECT SUM(af.count) as sum FROM age_fraud as af),
 sum_not_fraud as (SELECT SUM(anf.count) as sum FROM age_not_fraud as anf)
 INSERT OVERWRITE LOCAL DIRECTORY '/root/query_results/q8'
