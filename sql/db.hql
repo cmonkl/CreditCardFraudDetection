@@ -34,3 +34,39 @@ INSERT INTO transactions_part partition (is_fraud=0) SELECT index, trans_date_tr
 INSERT INTO transactions_part partition (is_fraud=1) SELECT index, trans_date_trans_time, amt, trans_num, merchant_id, cart_holder_id FROM transactions WHERE is_fraud=1;
 
 
+-- Creating bucketing
+SET hive.enforce.bucketing=true;
+
+CREATE EXTERNAL TABLE merchant_buck(
+    merchant varchar(50),
+    category varchar(50),
+    merch_lat double,
+    merch_long double,
+    merchant_id int) 
+    CLUSTERED BY (merchant_id) into 20 buckets
+    STORED AS AVRO LOCATION '/project/merchant_buck' 
+    TBLPROPERTIES ('AVRO.COMPRESS'='SNAPPY');
+
+INSERT INTO merchant_buck SELECT * FROM merchant;
+
+CREATE EXTERNAL TABLE cart_holder_buck(
+    	cc_num VARCHAR (20),
+        first VARCHAR (20),
+        last VARCHAR (30),
+        gender VARCHAR (1),
+        street VARCHAR (100),
+        city VARCHAR (50),
+        state VARCHAR (2),
+        zip int,
+        lat double,
+        long double,
+        city_pop int,
+        job VARCHAR(100),
+        dob int,
+        cart_holder_id int) 
+    CLUSTERED BY (cart_holder_id) into 10 buckets
+    STORED AS AVRO LOCATION '/project/cart_holder_buck' 
+    TBLPROPERTIES ('AVRO.COMPRESS'='SNAPPY');
+
+
+INSERT INTO cart_holder_buck SELECT * FROM cart_holder;
