@@ -43,7 +43,7 @@ CREATE EXTERNAL TABLE merchant_buck(
     merch_lat double,
     merch_long double,
     merchant_id int) 
-    CLUSTERED BY (merchant_id) into 10 buckets
+    CLUSTERED BY (merchant_id) into 7 buckets
     STORED AS AVRO LOCATION '/project/merchant_buck' 
     TBLPROPERTIES ('AVRO.COMPRESS'='SNAPPY');
 
@@ -64,7 +64,7 @@ CREATE EXTERNAL TABLE cart_holder_buck(
         job VARCHAR(100),
         dob int,
         cart_holder_id int) 
-    CLUSTERED BY (cart_holder_id) into 10 buckets
+    CLUSTERED BY (cart_holder_id) into 7 buckets
     STORED AS AVRO LOCATION '/project/cart_holder_buck' 
     TBLPROPERTIES ('AVRO.COMPRESS'='SNAPPY');
 
