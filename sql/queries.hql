@@ -57,8 +57,7 @@ sum_not_fraud as (SELECT SUM(hnf.count) as sum FROM hour_not_fraud as hnf)
 INSERT OVERWRITE LOCAL DIRECTORY '/root/query_results/q5' 
 ROW FORMAT DELIMITED 
 FIELDS TERMINATED BY ','
-SELECT hf.hour, hf.count/sf.sum*100, hnf.count/snf.sum*100
-FROM hour_fraud as hf inner join hour_not_fraud as hnf on hf.hour=hnf.hour, sum_fraud as sf, sum_not_fraud as snf;
+SELECT hf.hour, hf.count/sf.sum*100, hnf.count/snf.sum*100 FROM hour_fraud as hf inner join hour_not_fraud as hnf on hf.hour=hnf.hour, sum_fraud as sf, sum_not_fraud as snf;
 
 
 -- Monthly trend
@@ -71,8 +70,7 @@ sum_not_fraud as (SELECT SUM(mnf.count) as sum FROM month_not_fraud as mnf)
 INSERT OVERWRITE LOCAL DIRECTORY '/root/query_results/q6' 
 ROW FORMAT DELIMITED 
 FIELDS TERMINATED BY ','
-SELECT hf.month, hf.count/sf.sum*100, hnf.count/snf.sum*100
-FROM month_fraud as hf inner join month_not_fraud as hnf on hf.month=hnf.month, sum_fraud as sf, sum_not_fraud as snf;
+SELECT hf.month, hf.count/sf.sum*100, hnf.count/snf.sum*100 FROM month_fraud as hf inner join month_not_fraud as hnf on hf.month=hnf.month, sum_fraud as sf, sum_not_fraud as snf;
 
 
 -- Age vs Fraud
