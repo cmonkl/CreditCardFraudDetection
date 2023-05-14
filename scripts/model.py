@@ -584,6 +584,6 @@ threshold_results.to_csv("output/final_model_thresh.csv")
 
 plt.plot(thresholds, metric_values)
 print("Loss before model: ")
-test_data.filter("is_fraud = 1").select("amt").agg({'amt': 'sum'}).show()
+amt_val = test_data.filter("is_fraud = 1").select("amt").agg({'amt': 'sum'}).collect()[0][0]#.show()
 print("Loss after model: ", threshold_results.loss.min())
-print("Profit: ", 1197188.5299999993 - threshold_results.loss.min())
+print("Profit: ", amt_val - threshold_results.loss.min())
