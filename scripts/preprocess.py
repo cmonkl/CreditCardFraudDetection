@@ -2,7 +2,7 @@ import pandas as pd
 from datetime import datetime
 
 
-transactions = pd.read_csv("transactions.csv", header=0)
+transactions = pd.read_csv("data/transactions.csv", header=0)
 transactions['trans_date_trans_time'] = transactions['trans_date_trans_time'].apply(
     lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S'))
 transactions['trans_date_trans_time'] = (
